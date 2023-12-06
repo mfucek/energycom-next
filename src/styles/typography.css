@@ -1,0 +1,71 @@
+/* Typography */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
+
+/* Display */
+
+.overlay {
+	opacity: 40%;
+}
+
+.display-1 {
+	@apply font-open font-extrabold md:text-[100px] text-[44px] md:leading-[100px] leading-[44px] tracking-[-2.64px] md:tracking-[-6px];
+}
+
+.display-2 {
+	@apply font-open font-extrabold md:text-[64px] text-[32px] md:leading-[64px] leading-[32px] tracking-[-1.92px] md:tracking-[-3.84px];
+}
+
+.display-3 {
+	@apply font-open font-extrabold md:text-[48px] text-[28px] md:leading-[48px] leading-[28px] tracking-[-1.68px] md:tracking-[-2.88px];
+}
+
+/* Title */
+
+.title-1 {
+	@apply font-open font-bold md:text-[22px] text-[18px] md:leading-[24px] leading-[24px] tracking-[-3%];
+}
+
+.title-2 {
+	@apply font-open font-bold md:text-[18px] text-[16px] md:leading-[24px] leading-[24px] tracking-[-3%];
+}
+
+.title-3 {
+	@apply font-open font-bold md:text-[14px] text-[15px] md:leading-[20px] leading-[20px] tracking-[-3%];
+}
+
+/* Body */
+
+.body-1 {
+	@apply font-nunito font-normal md:text-[18px] text-[16px] md:leading-[24px] leading-[24px] tracking-[-3%];
+}
+
+.body-2 {
+	@apply font-nunito font-normal md:text-[14px] text-[13px] md:leading-[20px] leading-[20px] tracking-[-3%];
+}
+
+.body-3 {
+	@apply font-nunito font-normal md:text-[12px] text-[11px] md:leading-[16px] leading-[16px] tracking-[-3%];
+}
+
+.caption {
+	@apply font-nunito font-bold md:text-[11px] text-[11px] md:leading-[16px] leading-[16px] tracking-[-3%];
+}
+
+/* Input and Buttons */
+
+.input {
+	@apply font-nunito font-normal md:text-[16px] text-[16px] md:leading-[24px] leading-[24px] tracking-[-3%];
+}
+
+.button-large {
+	@apply font-nunito font-bold md:text-[15px] text-[15px] md:leading-[20px] leading-[20px] tracking-[-3%];
+}
+
+.button {
+	@apply font-nunito font-bold md:text-[13px] text-[12px] md:leading-[16px] leading-[16px] tracking-[-3%];
+}
+
+.button-small {
+	@apply font-nunito font-normal md:text-[11px] text-[11px] md:leading-[16px] leading-[16px] tracking-[-3%];
+}

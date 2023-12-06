@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+	@apply overflow-x-hidden bg-background text-neutral;
+}
+
+a {
+	@apply text-primary;
+	text-decoration: none;
+}
+
+* {
+	@apply box-border p-0 m-0;
+}

@@ -1,0 +1,88 @@
+/* Colors */
+
+:root {
+	--color-section: #ffffff;
+	--color-section-strong: #f9fafb;
+	--color-background: #f1f2f4;
+
+	--color-primary: #3461ff;
+	--color-primary-strong: #7190ff;
+	--color-primary-medium: #c2d0ff;
+	--color-primary-weak: #ebefff;
+	--color-primary-contrast: #ffffff;
+
+	--color-neutral: #0b0d0f;
+	--color-neutral-strong: #6a6c6d;
+	--color-neutral-medium: #c9cbcc;
+	--color-neutral-weak: #ebeced;
+	--color-neutral-contrast: #ffffff;
+
+	--color-info: #58afff;
+	--color-info-strong: #78befe;
+	--color-info-medium: #a1d1fd;
+	--color-info-weak: #d9ebfc;
+	--color-info-contrast: #000000;
+
+	--color-success: #5dc39c;
+	--color-success-strong: #7cceaf;
+	--color-success-medium: #9bd9c2;
+	--color-success-weak: #daefe8;
+	--color-success-contrast: #000000;
+
+	--color-danger: #ff5959;
+	--color-danger-strong: #fd898a;
+	--color-danger-medium: #fca1a2;
+	--color-danger-weak: #fadadb;
+	--color-danger-contrast: #000000;
+
+	--color-warning: #ffc56d;
+	--color-warning-strong: #fed08a;
+	--color-warning-medium: #fcddad;
+	--color-warning-weak: #faefdf;
+	--color-warning-contrast: #000000;
+
+	--color-special-black: #000000;
+	--color-special-white: #ffffff;
+}
+
+.dark {
+	--color-section: #101213;
+	--color-section-strong: #17191a;
+	--color-background: #0b0d0f;
+
+	--color-primary: #3461ff;
+	--color-primary-strong: #263e97;
+	--color-primary-medium: #1c264f;
+	--color-primary-weak: #181d34;
+	--color-primary-contrast: #ffffff;
+
+	--color-neutral: #ffffff;
+	--color-neutral-strong: #939495;
+	--color-neutral-medium: #4c4d4e;
+	--color-neutral-weak: #232525;
+	--color-neutral-contrast: #000000;
+
+	--color-info: #3478df;
+	--color-info-strong: #24467c;
+	--color-info-medium: #1a2840;
+	--color-info-weak: #171c28;
+	--color-info-contrast: #ffffff;
+
+	--color-success: #359a73;
+	--color-success-strong: #255746;
+	--color-success-medium: #1b2f2a;
+	--color-success-weak: #171f1f;
+	--color-success-contrast: #ffffff;
+
+	--color-danger: #c35656;
+	--color-danger-strong: #7b3b3b;
+	--color-danger-medium: #3d2324;
+	--color-danger-weak: #22191a;
+	--color-danger-contrast: #ffffff;
+
+	--color-warning: #d39e4d;
+	--color-warning-strong: #7b5f33;
+	--color-warning-medium: #4b3c24;
+	--color-warning-weak: #242019;
+	--color-warning-contrast: #ffffff;
+}
