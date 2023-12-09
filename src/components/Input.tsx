@@ -40,10 +40,14 @@ export const _Input = (
 
 	const inputStyle = {
 		default: classNames(
-			'border-neutral-weak active:border-neutral hover:border-neutral-strong placeholder:text-neutral-medium outline-none active:border-neutral-strong focus:border-neutral-strong placeholder:focus:text-transparent'
+			'border-neutral-weak active:border-neutral hover:border-neutral-strong placeholder:text-neutral-medium outline-none active:border-neutral-strong focus:border-neutral-strong placeholder:focus:text-transparent',
+			'bg-section',
+			'disabled:bg-neutral-weak disabled:text-neutral-strong'
 		),
 		error: classNames(
-			'border-danger active:border-danger hover:border-danger-strong placeholder:text-danger-medium outline-none active:border-danger-strong focus:border-danger-strong placeholder:focus:text-transparent'
+			'border-danger active:border-danger hover:border-danger-strong placeholder:text-danger-medium text-neutral outline-none active:border-danger-strong focus:border-danger-strong placeholder:focus:text-transparent',
+			'bg-danger-weak',
+			'disabled:bg-danger-weak disabled:text-danger-strong'
 		)
 	};
 	const inputClass = classNames(

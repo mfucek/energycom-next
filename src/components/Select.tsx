@@ -16,10 +16,12 @@ export const _Select = (
 ) => {
 	const selectStyle = {
 		default: classNames(
-			'border-neutral-weak active:border-neutral hover:border-neutral-strong placeholder:text-neutral-medium outline-none active:border-neutral-strong placeholder:focus:text-transparent'
+			'border-neutral-weak active:border-neutral hover:border-neutral-strong placeholder:text-neutral-medium outline-none active:border-neutral-strong placeholder:focus:text-transparent',
+			'bg-section disabled:bg-neutral-weak'
 		),
 		error: classNames(
-			'border-danger active:border-danger hover:border-danger-strong placeholder:text-danger-medium outline-none active:border-danger-strong placeholder:focus:text-transparent'
+			'border-danger active:border-danger hover:border-danger-strong text-danger placeholder:text-danger-medium outline-none active:border-danger-strong placeholder:focus:text-transparent',
+			'bg-section disabled:bg-neutral-weak'
 		)
 	};
 	const selectClass = classNames(

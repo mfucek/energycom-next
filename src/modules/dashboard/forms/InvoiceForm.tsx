@@ -1,53 +1,85 @@
+'use client';
+
 import { Button } from '@/components/Button';
 import { DatePicker } from '@/components/DatePicker';
 import { Input } from '@/components/Input';
 import { Select } from '@/components/Select';
-import { Tabs } from '@/components/Tabs';
+import { TabHandle, Tabs } from '@/components/Tabs';
 import { TextArea } from '@/components/TextArea';
+import { exchangeEURHRK } from '@/modules/bill/constants/exchange-eur-hrk';
+import {
+	TInvoiceSchema,
+	invoiceSchema
+} from '@/modules/bill/schemas/invoice-schema';
+import { roundTwoDecimals } from '@/utils/round-two-decimals';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import useFormPersist from 'react-hook-form-persist';
 
-const invoiceSchema = z.object({
-	client: z.object({
-		name: z.string().min(1),
-		buildingAddress: z.string().min(1),
-		omm: z.string(),
-		email: z.string().email(),
-		phone: z.string().optional(),
-		oib: z.number()
-	}),
-	invoice: z.object({
-		date: z.date(),
-		number: z.string(),
-		amount: z.number(),
-		vat: z.number(),
-		language: z.enum(['hr', 'en', 'fr', 'de', 'it'])
-	}),
-	details: z.object({
-		description: z.string(),
-		details: z.string(),
-		payment: z.string()
-	})
-});
+interface InvoiceFormProps {
+	onPreview?: (data: TInvoiceSchema) => void;
+	onDownload?: (data: TInvoiceSchema) => void;
+	previewTab?: ReactNode;
+}
 
-type TInvoiceSchema = z.infer<typeof invoiceSchema>;
-
-export const InvoiceForm = () => {
+export const InvoiceForm: FC<InvoiceFormProps> = ({
+	onPreview,
+	onDownload,
+	previewTab
+}) => {
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isValid, isLoading },
 		resetField,
-		watch
+		setValue,
+		watch,
+		getValues
 	} = useForm<TInvoiceSchema>({
 		resolver: zodResolver(invoiceSchema)
 	});
 
-	const onSubmit = () => {};
+	useEffect(() => {
+		setValue('invoice.date', new Date());
+	}, []);
+
+	const storage = localStorage || sessionStorage;
+
+	useFormPersist('invoiceData', {
+		watch,
+		setValue,
+		storage: storage,
+		exclude: ['invoice.date']
+	});
+
+	const [action, setAction] = useState<'preview' | 'download'>('preview');
+
+	const onError = (errors: { client?: any; invoice?: any; details?: any }) => {
+		if (errors.details) {
+			tabsRef.current?.setIndexByName('Opis');
+		}
+		if (errors.invoice) {
+			tabsRef.current?.setIndexByName('Iznos');
+		}
+		if (errors.client) {
+			tabsRef.current?.setIndexByName('Klijent');
+		}
+	};
+
+	const onSubmit = (data: TInvoiceSchema) => {
+		if (action === 'preview') {
+			onPreview?.(data);
+			tabsRef.current?.setIndexByName('Pregled');
+		} else if (action === 'download') {
+			onDownload?.(data);
+		}
+	};
+
+	const tabsRef = useRef<TabHandle>(null);
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
+		<form onSubmit={handleSubmit(onSubmit, onError)}>
 			<div className="flex mb-10">
 				<div className="flex flex-col gap-2 flex-1">
 					<h1 className="title-1">Kreacija Ponude</h1>
@@ -55,18 +87,33 @@ export const InvoiceForm = () => {
 						Unesite potrebne podatke, zatim ispišite ponudu u PDF obliku.
 					</p>
 				</div>
-				<div className="shrink-0">
-					<Button disabled={!isValid}>Ispis</Button>
+				<div className="shrink-0 flex gap-2">
+					<Button
+						theme="neutral"
+						variant="outline"
+						onClick={() => {
+							setAction('preview');
+						}}>
+						Pregledaj
+					</Button>
+					<Button
+						onClick={() => {
+							setAction('download');
+						}}>
+						Preuzmi
+					</Button>
 				</div>
 			</div>
 			<Tabs
+				ref={tabsRef}
 				tabs={[
 					{
 						title: 'Klijent',
+						error: !!errors.client,
 						content: (
 							<div className="py-6">
-								<p className="title-3 mb-3">Klijent</p>
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+								<p className="title-3 mb-3">Podaci o klijentu</p>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
 									<Input
 										{...register('client.name')}
 										label="Korisnik"
@@ -109,22 +156,32 @@ export const InvoiceForm = () => {
 					},
 					{
 						title: 'Iznos',
+						error: !!errors.invoice,
 						content: (
 							<div className="py-6">
-								<p className="title-3 mb-3">Iznos Ponude</p>
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-									<DatePicker
-										{...register('invoice.date', { valueAsDate: true })}
-										label="Datum ponude"
-										type="text"
-										error={errors.invoice?.date?.message}
-									/>
+								<p className="title-3 mb-3">Broj i datum ponude</p>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
 									<Input
 										{...register('invoice.number')}
 										label="Broj ponude"
 										type="text"
 										error={errors.invoice?.number?.message}
 									/>
+									<DatePicker
+										{...register('invoice.date', { valueAsDate: true })}
+										label="Datum ponude"
+										type="text"
+										value={
+											new Date(watch('invoice.date') || new Date())
+												.toISOString()
+												.split('T')[0]
+										}
+										// defaultValue={new Date().toLocaleDateString('en-CA')}
+										error={errors.invoice?.date?.message}
+									/>
+								</div>
+								<p className="title-3 mb-3">Jezik ponude</p>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
 									<Select
 										{...register('invoice.language')}
 										label="Jezik ponude"
@@ -136,24 +193,63 @@ export const InvoiceForm = () => {
 										<option value={'de'}>Njemački</option>
 										<option value={'it'}>Talijanski</option>
 									</Select>
-									<Input
-										{...register('invoice.amount', { valueAsNumber: true })}
-										label="Iznos ponude bez PDV (EUR)"
-										type="number"
-										error={errors.invoice?.amount?.message}
-									/>
-									<Input
-										{...register('invoice.vat', { valueAsNumber: true })}
-										label="Iznos PDV (%)"
-										type="number"
-										error={errors.invoice?.vat?.message}
-									/>
+								</div>
+								<p className="title-3 mb-3">Iznos Ponude</p>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
+									<div className="flex flex-col gap-2">
+										<Input
+											{...register('invoice.amount', { valueAsNumber: true })}
+											label="Osnovica EUR"
+											type="number"
+											error={errors.invoice?.amount?.message}
+										/>
+										<Input
+											{...register('invoice.vat', { valueAsNumber: true })}
+											label="Iznos PDV (%)"
+											type="number"
+											defaultValue={25}
+											error={errors.invoice?.vat?.message}
+										/>
+									</div>
+									<div className="flex flex-col gap-2">
+										<Input
+											label="Osnovica HRK"
+											value={
+												roundTwoDecimals(
+													watch('invoice.amount') * exchangeEURHRK
+												) || 0
+											}
+											disabled
+										/>
+										<Input
+											label="Ukupno EUR (sa PDV)"
+											value={
+												roundTwoDecimals(
+													watch('invoice.amount') *
+														(1 + watch('invoice.vat') / 100)
+												) || 0
+											}
+											disabled
+										/>
+										<Input
+											label="Ukupno HRK (sa PDV)"
+											value={
+												roundTwoDecimals(
+													watch('invoice.amount') *
+														(1 + watch('invoice.vat') / 100) *
+														exchangeEURHRK
+												) || 0
+											}
+											disabled
+										/>
+									</div>
 								</div>
 							</div>
 						)
 					},
 					{
 						title: 'Opis',
+						error: !!errors.details,
 						content: (
 							<div className="py-6">
 								<p className="title-3 mb-3">Opis Ponude</p>
@@ -164,18 +260,22 @@ export const InvoiceForm = () => {
 										error={errors.details?.description?.message}
 									/>
 									<TextArea
-										{...register('details.payment')}
-										label="Podaci o plaćanju"
-										error={errors.details?.payment?.message}
-									/>
-									<TextArea
 										{...register('details.details')}
 										label="Opis proizvoda i usluge"
 										error={errors.details?.details?.message}
 									/>
+									<TextArea
+										{...register('details.payment')}
+										label="Podaci o plaćanju"
+										error={errors.details?.payment?.message}
+									/>
 								</div>
 							</div>
 						)
+					},
+					{
+						title: 'Pregled',
+						content: previewTab
 					}
 				]}
 			/>

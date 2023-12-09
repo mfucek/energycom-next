@@ -55,11 +55,19 @@ export const Button: FC<
 	...rest
 }) => {
 	const buttonClass = classNames(
-		'px-3 h-10 rounded-full duration-300 hover:duration-100 hover:translate-y-[-2px] active:translate-y-[4px] disabled:cursor-not-allowed',
+		'px-3 h-10 rounded-full duration-300 hover:duration-100 disabled:cursor-not-allowed',
 		sizeClass[size],
 		variantThemeClass[variant][theme],
-		disabled && 'cursor-not-allowed'
+		disabled
+			? 'cursor-not-allowed'
+			: 'hover:translate-y-[-2px] active:translate-y-[4px]'
 	);
 
-	return <button className={classNames(buttonClass, className)} {...rest} />;
+	return (
+		<button
+			disabled={disabled}
+			className={classNames(buttonClass, className)}
+			{...rest}
+		/>
+	);
 };
