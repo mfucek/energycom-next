@@ -25,15 +25,6 @@ export async function GET(request: Request) {
 		});
 	}
 
-	try {
-		console.log(safeInvoice.data.details.description);
-		const translated = await translate(
-			safeInvoice.data.details.description,
-			'en'
-		);
-		console.log('success');
-		console.log(translated);
-	} catch {}
 	const lang = safeInvoice.data.invoice.language;
 
 	console.log('trying 2');
