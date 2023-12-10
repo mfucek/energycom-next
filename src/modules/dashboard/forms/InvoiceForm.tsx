@@ -15,7 +15,7 @@ import { roundTwoDecimals } from '@/utils/round-two-decimals';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import useFormPersist from 'react-hook-form-persist';
+import { useFormPersist } from '../hooks/use-form-persist';
 
 interface InvoiceFormProps {
 	onPreview?: (data: TInvoiceSchema) => void;
@@ -44,12 +44,10 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 		setValue('invoice.date', new Date());
 	}, []);
 
-	const storage = localStorage || sessionStorage;
-
 	useFormPersist('invoiceData', {
 		watch,
 		setValue,
-		storage: storage,
+		getStorage: () => localStorage,
 		exclude: ['invoice.date']
 	});
 

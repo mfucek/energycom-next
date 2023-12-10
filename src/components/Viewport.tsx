@@ -12,7 +12,7 @@ export const Viewport: FC<HTMLAttributes<HTMLDivElement>> = ({
 	const { toggle } = useTheme();
 	return (
 		<div className="min-h-screen flex flex-col justify-between" {...rest}>
-			<div>{children}</div>
+			{children}
 
 			<Container>
 				<div className="text-center text-neutral-medium caption py-10 flex justify-center gap-2">

@@ -10,10 +10,6 @@ import { InvoiceForm } from '../forms/InvoiceForm';
 export const DashboardPage = () => {
 	const [invoice, setInvoice] = useState<TInvoiceSchema | null>(null);
 
-	if (typeof window === 'undefined') {
-		return <></>;
-	}
-
 	const PreviewTab = () => {
 		if (!invoice) {
 			return undefined;

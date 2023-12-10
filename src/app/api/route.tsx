@@ -3,6 +3,7 @@ import { invoiceSchema } from '@/modules/bill/schemas/invoice-schema';
 import { Font, renderToBuffer } from '@joshuajaco/react-pdf-renderer-bundled';
 import { NextResponse } from 'next/server';
 import SuperJSON from 'superjson';
+import { translate } from './translate';
 
 const endpoint = process.env.NEXT_PUBLIC_API_URL;
 
@@ -24,6 +25,21 @@ export async function GET(request: Request) {
 		});
 	}
 
+	const translated = await translate(
+		safeInvoice.data.details.description,
+		'en'
+	);
+	console.log(translated);
+	const lang = safeInvoice.data.invoice.language;
+
+	const [details, description, payment] = await Promise.all([
+		translate(safeInvoice.data.details.details, lang),
+		translate(safeInvoice.data.details.description, lang),
+		translate(safeInvoice.data.details.payment, lang)
+	]);
+
+	const translatedDetails = { details, description, payment };
+
 	Font.register({
 		family: 'Poppins',
 		fonts: [
@@ -42,7 +58,9 @@ export async function GET(request: Request) {
 		]
 	});
 
-	const buffer = await renderToBuffer(<Document invoice={safeInvoice.data} />);
+	const buffer = await renderToBuffer(
+		<Document invoice={{ ...safeInvoice.data, details: translatedDetails }} />
+	);
 
 	const fileName =
 		safeInvoice.data.invoice.date
