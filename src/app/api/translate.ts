@@ -56,6 +56,10 @@ export const translate = async (message: string, language: Language) => {
 	console.log('data');
 	console.log(data);
 
+	console.log('choices');
+	console.log(data.choices);
+	console.log('choices[0]');
+	console.log(data.choices[0].message);
 	const out = data.choices[0].message.content as string;
 
 	return out;

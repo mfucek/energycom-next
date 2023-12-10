@@ -1,5 +1,6 @@
 import { Card } from '@/components/Card';
 import { Container } from '@/components/Container';
+import { useCaptureEvent } from '@/lib/posthog';
 import { Document } from '@/modules/bill/Document';
 import { TInvoiceSchema } from '@/modules/bill/schemas/invoice-schema';
 import { PDFViewer } from '@react-pdf/renderer';
@@ -24,6 +25,8 @@ export const DashboardPage = () => {
 		);
 	};
 
+	const { captureInvoice } = useCaptureEvent();
+
 	return (
 		<main className="py-10">
 			<Container>
@@ -38,6 +41,7 @@ export const DashboardPage = () => {
 							document.body.appendChild(link);
 							link.click();
 							document.body.removeChild(link);
+							captureInvoice(data);
 							// window.open('/api?invoice=' + SuperJSON.stringify(data));
 						}}
 						previewTab={invoice ? <PreviewTab /> : undefined}
