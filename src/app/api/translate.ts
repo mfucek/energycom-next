@@ -35,7 +35,7 @@ export const translate = async (message: string, language: Language) => {
 			},
 			{ role: 'user', content: message }
 		],
-		model: 'gpt-3.5-turbo-1106',
+		model: 'gpt-3.5',
 		stream: false
 	});
 

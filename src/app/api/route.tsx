@@ -25,13 +25,18 @@ export async function GET(request: Request) {
 		});
 	}
 
-	const translated = await translate(
-		safeInvoice.data.details.description,
-		'en'
-	);
-	console.log(translated);
+	try {
+		console.log(safeInvoice.data.details.description);
+		const translated = await translate(
+			safeInvoice.data.details.description,
+			'en'
+		);
+		console.log('success');
+		console.log(translated);
+	} catch {}
 	const lang = safeInvoice.data.invoice.language;
 
+	console.log('trying 2');
 	const [details, description, payment] = await Promise.all([
 		translate(safeInvoice.data.details.details, lang),
 		translate(safeInvoice.data.details.description, lang),
