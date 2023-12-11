@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { ButtonHTMLAttributes, FC } from 'react';
+import { Spinner } from './Spinner';
 
 type ButtonTheme = 'primary' | 'neutral' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -42,6 +43,7 @@ interface ButtonProps {
 	theme?: ButtonTheme;
 	size?: ButtonSize;
 	variant?: ButtonVariant;
+	loading?: boolean;
 }
 
 export const Button: FC<
@@ -52,22 +54,31 @@ export const Button: FC<
 	theme = 'primary',
 	size = 'md',
 	variant = 'solid',
+	loading,
+	children,
 	...rest
 }) => {
 	const buttonClass = classNames(
-		'px-3 h-10 rounded-full duration-300 hover:duration-100 disabled:cursor-not-allowed',
+		'relative px-3 h-10 rounded-full duration-300 hover:duration-100 disabled:cursor-not-allowed',
 		sizeClass[size],
 		variantThemeClass[variant][theme],
-		disabled
+		disabled || loading
 			? 'cursor-not-allowed'
-			: 'hover:translate-y-[-2px] active:translate-y-[4px]'
+			: 'hover:translate-y-[-2px] active:translate-y-[4px]',
+		loading && 'text-transparent'
 	);
 
 	return (
 		<button
 			disabled={disabled}
 			className={classNames(buttonClass, className)}
-			{...rest}
-		/>
+			{...rest}>
+			{children}
+			{loading && (
+				<div className="absolute inset-0 flex items-center justify-center">
+					<Spinner />
+				</div>
+			)}
+		</button>
 	);
 };

@@ -6,6 +6,8 @@ import { Input } from '@/components/Input';
 import { Select } from '@/components/Select';
 import { TabHandle, Tabs } from '@/components/Tabs';
 import { TextArea } from '@/components/TextArea';
+import { useCaptureEvent } from '@/lib/posthog';
+import { trpc } from '@/lib/trpc/client';
 import { exchangeEURHRK } from '@/modules/bill/constants/exchange-eur-hrk';
 import {
 	TInvoiceSchema,
@@ -65,7 +67,17 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 		}
 	};
 
-	const onSubmit = (data: TInvoiceSchema) => {
+	const onSubmit = (_data: TInvoiceSchema) => {
+		const { description, details, payment } = textAreas;
+		const data: TInvoiceSchema = {
+			..._data,
+			details: {
+				description:
+					description !== '' ? description : _data.details.description,
+				details: details !== '' ? details : _data.details.details,
+				payment: payment !== '' ? payment : _data.details.payment
+			}
+		};
 		if (action === 'preview') {
 			onPreview?.(data);
 			tabsRef.current?.setIndexByName('Pregled');
@@ -75,6 +87,39 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 	};
 
 	const tabsRef = useRef<TabHandle>(null);
+
+	const [textAreas, setTextAreas] = useState<
+		Record<'description' | 'details' | 'payment', string>
+	>({
+		description: '',
+		details: '',
+		payment: ''
+	});
+
+	const { mutateAsync: translate, isLoading: translationLoading } =
+		trpc.gpt.translate.useMutation();
+
+	const { captureTranslation } = useCaptureEvent();
+
+	const handleTranslate = async () => {
+		if (translationLoading) return;
+
+		const lang = getValues('invoice.language');
+		const { description, details, payment } = getValues('details');
+		const [t1, t2, t3] = await Promise.all([
+			translate({ message: description, language: lang }),
+			translate({ message: details, language: lang }),
+			translate({ message: payment, language: lang })
+		]);
+
+		captureTranslation(getValues());
+
+		setTextAreas({
+			description: t1,
+			details: t2,
+			payment: t3
+		});
+	};
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -250,12 +295,30 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 						error: !!errors.details,
 						content: (
 							<div className="py-6">
-								<p className="title-3 mb-3">Opis Ponude</p>
-								<div className="flex flex-col gap-2">
+								<div className="flex justify-between">
+									<p className="title-3 mb-3">Opis Ponude</p>
+									<Button
+										theme="neutral"
+										variant="outline"
+										size="sm"
+										type="button"
+										loading={translationLoading}
+										onClick={() => {
+											handleTranslate();
+										}}>
+										Prevedi
+									</Button>
+								</div>
+								<div className="grid grid-cols-2 gap-2">
 									<TextArea
 										{...register('details.description')}
 										label="Podaci o proizvodu i usluzi"
 										error={errors.details?.description?.message}
+									/>
+									<TextArea
+										label="Translated"
+										disabled
+										value={textAreas.description}
 									/>
 									<TextArea
 										{...register('details.details')}
@@ -263,9 +326,19 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 										error={errors.details?.details?.message}
 									/>
 									<TextArea
+										label="Translated"
+										disabled
+										value={textAreas.details}
+									/>
+									<TextArea
 										{...register('details.payment')}
 										label="Podaci o plaćanju"
 										error={errors.details?.payment?.message}
+									/>
+									<TextArea
+										label="Translated"
+										disabled
+										value={textAreas.payment}
 									/>
 								</div>
 							</div>

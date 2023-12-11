@@ -1,11 +1,11 @@
 import { Card } from '@/components/Card';
 import { Container } from '@/components/Container';
 import { useCaptureEvent } from '@/lib/posthog';
+import { trpc } from '@/lib/trpc/client';
 import { Document } from '@/modules/bill/Document';
 import { TInvoiceSchema } from '@/modules/bill/schemas/invoice-schema';
 import { PDFViewer } from '@react-pdf/renderer';
 import { useState } from 'react';
-import SuperJSON from 'superjson';
 import { InvoiceForm } from '../forms/InvoiceForm';
 
 export const DashboardPage = () => {
@@ -27,6 +27,8 @@ export const DashboardPage = () => {
 
 	const { captureInvoice } = useCaptureEvent();
 
+	const { mutateAsync: generatePdf } = trpc.pdf.generate.useMutation();
+
 	return (
 		<main className="py-10">
 			<Container>
@@ -35,14 +37,15 @@ export const DashboardPage = () => {
 						onPreview={(data) => {
 							setInvoice(data);
 						}}
-						onDownload={(data) => {
+						onDownload={async (data) => {
+							const { fileName, base64 } = await generatePdf(data);
+
 							let link = document.createElement('a');
-							link.href = '/api?invoice=' + SuperJSON.stringify(data);
-							document.body.appendChild(link);
+							link.href = base64;
+							link.download = fileName;
 							link.click();
-							document.body.removeChild(link);
+
 							captureInvoice(data);
-							// window.open('/api?invoice=' + SuperJSON.stringify(data));
 						}}
 						previewTab={invoice ? <PreviewTab /> : undefined}
 					/>

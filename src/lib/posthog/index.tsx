@@ -16,12 +16,18 @@ export const useCaptureEvent = () => {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
-	if (process.env.NODE_ENV === 'development') {
-		return { capture: () => {}, captureInvoice: () => {} };
-	}
-
-	if (typeof window === 'undefined') {
-		return { capture: () => {}, captureInvoice: () => {} };
+	if (process.env.NODE_ENV === 'development' || typeof window === 'undefined') {
+		return {
+			capture: () => {
+				console.log('capture');
+			},
+			captureInvoice: () => {
+				console.log('captureInvoice');
+			},
+			captureTranslation: () => {
+				console.log('captureTranslation');
+			}
+		};
 	}
 
 	const capture = (name: string, properties: Record<string, any>) => {
@@ -34,11 +40,23 @@ export const useCaptureEvent = () => {
 		}
 	};
 
+	const captureTranslation = (invoice: TInvoiceSchema) => {
+		const {
+			details: { description, details, payment },
+			invoice: { language }
+		} = invoice;
+		const descriptionLength = (description + details + payment).length;
+
+		capture('invoice_translation', {
+			language: language,
+			description_length: descriptionLength
+		});
+	};
+
 	const captureInvoice = (invoice: TInvoiceSchema) => {
 		const {
 			client: { name },
-			invoice: { amount, vat, language, number },
-			details: { description, details, payment }
+			invoice: { amount, vat, language, number }
 		} = invoice;
 
 		capture('invoice_render', {
@@ -46,12 +64,11 @@ export const useCaptureEvent = () => {
 			amount,
 			vat,
 			language,
-			invoice_number: number,
-			description_length: (description + details + payment).length
+			invoice_number: number
 		});
 	};
 
-	return { capture, captureInvoice };
+	return { capture, captureInvoice, captureTranslation };
 };
 
 export const PHProvider: FC<PropsWithChildren<{}>> = ({ children }) => {

@@ -42,12 +42,12 @@ export const _Input = (
 		default: classNames(
 			'border-neutral-weak active:border-neutral hover:border-neutral-strong placeholder:text-neutral-medium outline-none active:border-neutral-strong focus:border-neutral-strong placeholder:focus:text-transparent',
 			'bg-section',
-			'disabled:bg-neutral-weak disabled:text-neutral-strong'
+			'disabled:bg-neutral-weak disabled:text-neutral-strong disabled:!border-neutral-weak'
 		),
 		error: classNames(
 			'border-danger active:border-danger hover:border-danger-strong placeholder:text-danger-medium text-neutral outline-none active:border-danger-strong focus:border-danger-strong placeholder:focus:text-transparent',
 			'bg-danger-weak',
-			'disabled:bg-danger-weak disabled:text-danger-strong'
+			'disabled:bg-danger-weak disabled:text-danger-strong disabled:!border-danger-weak'
 		)
 	};
 	const inputClass = classNames(

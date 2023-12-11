@@ -1,5 +1,5 @@
+import { Providers } from '@/components/Providers';
 import { Viewport } from '@/components/Viewport';
-import { ThemeProvider } from '@/modules/theme/theme-provider';
 import '@/styles/colors.css';
 import '@/styles/globals.css';
 import '@/styles/typography.css';
@@ -22,9 +22,9 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={inter.className}>
-				<ThemeProvider>
+				<Providers>
 					<Viewport>{children}</Viewport>
-				</ThemeProvider>
+				</Providers>
 			</body>
 		</html>
 	);
