@@ -43,7 +43,9 @@ export const DashboardPage = () => {
 							let link = document.createElement('a');
 							link.href = base64;
 							link.download = fileName;
+							document.body.appendChild(link);
 							link.click();
+							document.body.removeChild(link);
 
 							captureInvoice(data);
 						}}
