@@ -5,7 +5,6 @@ export const invoiceSchema = z.object({
 	client: z.object({
 		name: z.string().min(1),
 		buildingAddress: z.string().min(1),
-		omm: z.string().min(1),
 		email: z.string().email(),
 		phone: z.string().optional(),
 		oib: z.number().min(1)

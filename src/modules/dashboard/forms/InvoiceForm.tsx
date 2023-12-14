@@ -170,12 +170,6 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 										error={errors.client?.buildingAddress?.message}
 									/>
 									<Input
-										{...register('client.omm')}
-										label="Šifra OMM"
-										type="text"
-										error={errors.client?.omm?.message}
-									/>
-									<Input
 										{...register('client.email')}
 										label="Email"
 										type="text"

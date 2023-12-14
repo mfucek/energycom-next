@@ -251,7 +251,6 @@ export const Document = ({ invoice }: { invoice: TInvoiceSchema }) => {
 					/>
 					<Item name={t.user + ':'} value={invoice.client.name} />
 					<Item name={t.address + ':'} value={invoice.client.buildingAddress} />
-					<Item name={t.omm + ':'} value={invoice.client.omm} />
 					<Item name={t.oib + ':'} value={invoice.client.oib.toString()} />
 					{invoice.client.phone && (
 						<Item name={t.phone + ':'} value={invoice.client.phone} />

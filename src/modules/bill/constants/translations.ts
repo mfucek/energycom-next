@@ -4,11 +4,11 @@ export type Language = (typeof languages)[number];
 
 const _translations = {
 	titleFirst: {
-		hr: 'Ponuda za izgradnju solarne elektrane',
-		en: 'Offer for the construction of a solar power plant',
-		fr: "Offre pour la construction d'une centrale solaire",
-		de: 'Angebot für den Bau eines Solarkraftwerks',
-		it: 'Offerta per la costruzione di una centrale solare'
+		hr: 'Ponuda za ugradnju dizalice topline',
+		en: 'Offer for the installation of a heat pump',
+		fr: "Offre pour l'installation d'une pompe à chaleur",
+		de: 'Angebot für die Installation einer Wärmepumpe',
+		it: "Offerta per l'installazione di una pompa di calore"
 	},
 	number: {
 		hr: 'br.',

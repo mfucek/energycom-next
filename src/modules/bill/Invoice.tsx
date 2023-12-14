@@ -18,7 +18,6 @@ export const Invoice = () => {
 						client: {
 							name: '',
 							buildingAddress: 'asd',
-							omm: '',
 							email: '',
 							oib: 0
 						},
