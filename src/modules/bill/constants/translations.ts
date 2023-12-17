@@ -3,12 +3,26 @@ export const languages = ['hr', 'en', 'fr', 'de', 'it'] as const;
 export type Language = (typeof languages)[number];
 
 const _translations = {
-	titleFirst: {
+	headingHeatPump: {
 		hr: 'Ponuda za ugradnju dizalice topline',
 		en: 'Offer for the installation of a heat pump',
 		fr: "Offre pour l'installation d'une pompe à chaleur",
 		de: 'Angebot für die Installation einer Wärmepumpe',
 		it: "Offerta per l'installazione di una pompa di calore"
+	},
+	headingSolar: {
+		hr: 'Ponuda za izgradnju solarne elektrane',
+		en: 'Offer for the construction of a solar power plant',
+		fr: "Offre pour la construction d'une centrale solaire",
+		de: 'Angebot für den Bau eines Solarkraftwerks',
+		it: 'Offerta per la costruzione di una centrale solare'
+	},
+	headingMixed: {
+		hr: 'Ponuda za ugradnju dizalice topline i solarne elektrane',
+		en: 'Offer for the installation of a heat pump and solar power plant',
+		fr: "Offre pour l'installation d'une pompe à chaleur et d'une centrale solaire",
+		de: 'Angebot für die Installation einer Wärmepumpe und eines Solarkraftwerks',
+		it: "Offerta per l'installazione di una pompa di calore e di una centrale solare"
 	},
 	number: {
 		hr: 'br.',

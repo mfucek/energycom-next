@@ -15,6 +15,7 @@ import {
 } from '@/modules/bill/schemas/invoice-schema';
 import { roundTwoDecimals } from '@/utils/round-two-decimals';
 import { zodResolver } from '@hookform/resolvers/zod';
+import classNames from 'classnames';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useFormPersist } from '../hooks/use-form-persist';
@@ -32,6 +33,7 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 }) => {
 	const {
 		register,
+		unregister,
 		handleSubmit,
 		formState: { errors, isValid, isLoading },
 		resetField,
@@ -55,12 +57,12 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 
 	const [action, setAction] = useState<'preview' | 'download'>('preview');
 
-	const onError = (errors: { client?: any; invoice?: any; details?: any }) => {
-		if (errors.details) {
-			tabsRef.current?.setIndexByName('Opis');
+	const onError = (errors: { client?: any; invoice?: any; items?: any }) => {
+		if (errors.items) {
+			tabsRef.current?.setIndexByName('Stavke');
 		}
 		if (errors.invoice) {
-			tabsRef.current?.setIndexByName('Iznos');
+			tabsRef.current?.setIndexByName('Ponuda');
 		}
 		if (errors.client) {
 			tabsRef.current?.setIndexByName('Klijent');
@@ -68,14 +70,38 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 	};
 
 	const onSubmit = (_data: TInvoiceSchema) => {
-		const { description, details, payment } = textAreas;
+		const sta = translatedSolarTextAreas;
+		const hpta = translatedHeatPumpTextAreas;
+
+		const hpData = _data.items.heatPump
+			? {
+					description:
+						hpta.description !== ''
+							? hpta.description
+							: _data.items.heatPump.description,
+					details:
+						hpta.details !== '' ? hpta.details : _data.items.heatPump.details,
+					payment:
+						hpta.payment !== '' ? hpta.payment : _data.items.heatPump.payment
+			  }
+			: undefined;
+
+		const sData = _data.items.solar
+			? {
+					description:
+						sta.description !== ''
+							? sta.description
+							: _data.items.solar.description,
+					details: sta.details !== '' ? sta.details : _data.items.solar.details,
+					payment: sta.payment !== '' ? sta.payment : _data.items.solar.payment
+			  }
+			: undefined;
+
 		const data: TInvoiceSchema = {
 			..._data,
-			details: {
-				description:
-					description !== '' ? description : _data.details.description,
-				details: details !== '' ? details : _data.details.details,
-				payment: payment !== '' ? payment : _data.details.payment
+			items: {
+				solar: sData,
+				heatPump: hpData
 			}
 		};
 		if (action === 'preview') {
@@ -88,13 +114,19 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 
 	const tabsRef = useRef<TabHandle>(null);
 
-	const [textAreas, setTextAreas] = useState<
+	const [translatedSolarTextAreas, setTranslatedSolarTextAreas] = useState<
 		Record<'description' | 'details' | 'payment', string>
 	>({
 		description: '',
 		details: '',
 		payment: ''
 	});
+	const [translatedHeatPumpTextAreas, setTranslatedHeatPumpTextAreas] =
+		useState<Record<'description' | 'details' | 'payment', string>>({
+			description: '',
+			details: '',
+			payment: ''
+		});
 
 	const { mutateAsync: translate, isLoading: translationLoading } =
 		trpc.gpt.translate.useMutation();
@@ -105,20 +137,78 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 		if (translationLoading) return;
 
 		const lang = getValues('invoice.language');
-		const { description, details, payment } = getValues('details');
-		const [t1, t2, t3] = await Promise.all([
-			translate({ message: description, language: lang }),
-			translate({ message: details, language: lang }),
-			translate({ message: payment, language: lang })
-		]);
+		const valuesSolar = getValues('items.solar');
+		const valuesHeatPump = getValues('items.heatPump');
+
+		if (valuesSolar) {
+			const { description, details, payment } = valuesSolar;
+			const [t1, t2, t3] = await Promise.all([
+				translate({ message: description, language: lang }),
+				translate({ message: details, language: lang }),
+				translate({ message: payment, language: lang })
+			]);
+			setTranslatedSolarTextAreas({
+				description: t1,
+				details: t2,
+				payment: t3
+			});
+		}
+
+		if (valuesHeatPump) {
+			const { description, details, payment } = valuesHeatPump;
+			const [t1, t2, t3] = await Promise.all([
+				translate({ message: description, language: lang }),
+				translate({ message: details, language: lang }),
+				translate({ message: payment, language: lang })
+			]);
+			setTranslatedHeatPumpTextAreas({
+				description: t1,
+				details: t2,
+				payment: t3
+			});
+		}
 
 		captureTranslation(getValues());
+	};
 
-		setTextAreas({
-			description: t1,
-			details: t2,
-			payment: t3
-		});
+	useEffect(() => {
+		const subscription = watch((value, { name, type }) =>
+			console.log(value, name, type)
+		);
+		return () => subscription.unsubscribe();
+	}, [watch]);
+
+	const handleCheckbox = (name: 'solar' | 'heatPump') => {
+		if (name === 'solar') {
+			const prev = getValues('items.solar');
+
+			if (prev) {
+				unregister('items.solar');
+				setValue('items.solar', undefined);
+			} else {
+				register('items.solar');
+				setValue('items.solar', {
+					description: '',
+					details: '',
+					payment: ''
+				});
+			}
+		}
+		if (name === 'heatPump') {
+			const prev = getValues('items.heatPump');
+
+			if (prev) {
+				unregister('items.heatPump');
+				setValue('items.heatPump', undefined);
+			} else {
+				register('items.heatPump');
+				setValue('items.heatPump', {
+					description: '',
+					details: '',
+					payment: ''
+				});
+			}
+		}
 	};
 
 	return (
@@ -192,7 +282,7 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 						)
 					},
 					{
-						title: 'Iznos',
+						title: 'Ponuda',
 						error: !!errors.invoice,
 						content: (
 							<div className="py-6">
@@ -285,12 +375,12 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 						)
 					},
 					{
-						title: 'Opis',
-						error: !!errors.details,
+						title: 'Stavke',
+						error: !!errors.items,
 						content: (
-							<div className="py-6">
+							<div className="py-6 flex flex-col gap-6">
 								<div className="flex justify-between">
-									<p className="title-3 mb-3">Opis Ponude</p>
+									<p className="title-2">Sadržaj Ponude</p>
 									<Button
 										theme="neutral"
 										variant="outline"
@@ -303,37 +393,104 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 										Prevedi
 									</Button>
 								</div>
-								<div className="grid grid-cols-2 gap-2">
-									<TextArea
-										{...register('details.description')}
-										label="Podaci o proizvodu i usluzi"
-										error={errors.details?.description?.message}
-									/>
-									<TextArea
-										label="Translated"
-										disabled
-										value={textAreas.description}
-									/>
-									<TextArea
-										{...register('details.details')}
-										label="Opis proizvoda i usluge"
-										error={errors.details?.details?.message}
-									/>
-									<TextArea
-										label="Translated"
-										disabled
-										value={textAreas.details}
-									/>
-									<TextArea
-										{...register('details.payment')}
-										label="Podaci o plaćanju"
-										error={errors.details?.payment?.message}
-									/>
-									<TextArea
-										label="Translated"
-										disabled
-										value={textAreas.payment}
-									/>
+								{errors.items && (
+									<p className="body-2 !font-bold text-danger">
+										{errors.items.message}
+									</p>
+								)}
+								<div className="flex flex-col gap-4">
+									<div className="flex gap-2 items-center">
+										<input
+											type="checkbox"
+											className="w-4 h-4"
+											readOnly
+											checked={watch('items.solar') !== undefined}
+											onClick={() => handleCheckbox('solar')}
+										/>
+										<p className="title-3">Solarna Elektrana</p>
+									</div>
+									{watch('items.solar') !== undefined && (
+										<div className={classNames('grid grid-cols-2 gap-2')}>
+											<TextArea
+												{...register('items.solar.description')}
+												label="Podaci o proizvodu i usluzi"
+												error={errors.items?.solar?.description?.message}
+											/>
+											<TextArea
+												label="Translated"
+												disabled
+												value={translatedSolarTextAreas.description}
+											/>
+											<TextArea
+												{...register('items.solar.details')}
+												label="Opis proizvoda i usluge"
+												error={errors.items?.solar?.details?.message}
+											/>
+											<TextArea
+												label="Translated"
+												disabled
+												value={translatedSolarTextAreas.details}
+											/>
+											<TextArea
+												{...register('items.solar.payment')}
+												label="Podaci o plaćanju"
+												error={errors.items?.solar?.payment?.message}
+											/>
+											<TextArea
+												label="Translated"
+												disabled
+												value={translatedSolarTextAreas.payment}
+											/>
+										</div>
+									)}
+								</div>
+
+								<div className="flex flex-col gap-4">
+									<div className="flex gap-2 items-center">
+										<input
+											type="checkbox"
+											className="w-4 h-4"
+											readOnly
+											checked={watch('items.heatPump') !== undefined}
+											onClick={() => handleCheckbox('heatPump')}
+										/>
+										<p className="title-3">Dizalica Topline</p>
+									</div>
+
+									{watch('items.heatPump') !== undefined && (
+										<div className={classNames('grid grid-cols-2 gap-2')}>
+											<TextArea
+												{...register('items.heatPump.description')}
+												label="Podaci o proizvodu i usluzi"
+												error={errors.items?.heatPump?.description?.message}
+											/>
+											<TextArea
+												label="Translated"
+												disabled
+												value={translatedHeatPumpTextAreas.description}
+											/>
+											<TextArea
+												{...register('items.heatPump.details')}
+												label="Opis proizvoda i usluge"
+												error={errors.items?.heatPump?.details?.message}
+											/>
+											<TextArea
+												label="Translated"
+												disabled
+												value={translatedHeatPumpTextAreas.details}
+											/>
+											<TextArea
+												{...register('items.heatPump.payment')}
+												label="Podaci o plaćanju"
+												error={errors.items?.heatPump?.payment?.message}
+											/>
+											<TextArea
+												label="Translated"
+												disabled
+												value={translatedHeatPumpTextAreas.payment}
+											/>
+										</div>
+									)}
 								</div>
 							</div>
 						)

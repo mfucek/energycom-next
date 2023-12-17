@@ -151,12 +151,11 @@ const FrontPage: FC<{ title: string; subtitle: string }> = ({
 	);
 };
 
-const Section: FC<PropsWithChildren<{ title?: string }>> = ({
-	title,
-	children
-}) => {
+const Section: FC<
+	PropsWithChildren<{ title?: string; unpadded?: boolean }>
+> = ({ title, children, unpadded }) => {
 	return (
-		<View style={{ margin: '0 64px' }}>
+		<View style={unpadded ? {} : { margin: '0 64px' }}>
 			{title && (
 				<Text
 					style={{
@@ -218,13 +217,12 @@ const Item: FC<{ name?: string; value?: string; children?: ReactNode }> = ({
 	);
 };
 
-const Divider = () => {
+const Divider = ({ unpadded }: { unpadded?: boolean }) => {
 	return (
 		<View
 			style={{
 				height: '1px',
-				margin: '24px 64px',
-
+				margin: `24px ${unpadded ? '0' : '64px'}`,
 				backgroundColor: '#70CDDD'
 			}}
 		/>
@@ -235,10 +233,19 @@ const Divider = () => {
 export const Document = ({ invoice }: { invoice: TInvoiceSchema }) => {
 	const { t } = useTranslation(invoice.invoice.language);
 
+	let heading = t.headingMixed;
+
+	if (invoice.items.solar && !invoice.items.heatPump) {
+		heading = t.headingSolar;
+	}
+	if (!invoice.items.solar && invoice.items.heatPump) {
+		heading = t.headingHeatPump;
+	}
+
 	return (
 		<PDFDocument>
 			<FrontPage
-				title={`${t.titleFirst} ${t.number} ${invoice.invoice.number}`}
+				title={`${heading} ${t.number} ${invoice.invoice.number}`}
 				subtitle={`${t.subtitle}`}
 			/>
 
@@ -298,21 +305,63 @@ export const Document = ({ invoice }: { invoice: TInvoiceSchema }) => {
 
 				<Divider />
 
-				<Section title={t.detailsProduct}>
-					<Item value={invoice.details.description} />
-				</Section>
+				<View
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						gap: '12px',
+						margin: '0 64px'
+					}}>
+					{invoice.items.solar && (
+						<View
+							style={{
+								display: 'flex',
+								flexDirection: 'column',
+								flex: 1
+							}}>
+							<Section unpadded title={t.detailsProduct}>
+								<Item value={invoice.items.solar.description} />
+							</Section>
 
-				<Divider />
+							<Divider unpadded />
 
-				<Section title={t.detailsPayment}>
-					<Item value={invoice.details.payment} />
-				</Section>
+							<Section unpadded title={t.detailsPayment}>
+								<Item value={invoice.items.solar.payment} />
+							</Section>
 
-				<Divider />
+							<Divider unpadded />
 
-				<Section title={t.detailsDescription}>
-					<Item value={invoice.details.details} />
-				</Section>
+							<Section unpadded title={t.detailsDescription}>
+								<Item value={invoice.items.solar.details} />
+							</Section>
+						</View>
+					)}
+
+					{invoice.items.heatPump && (
+						<View
+							style={{
+								display: 'flex',
+								flexDirection: 'column',
+								flex: 1
+							}}>
+							<Section unpadded title={t.detailsProduct}>
+								<Item value={invoice.items.heatPump.description} />
+							</Section>
+
+							<Divider unpadded />
+
+							<Section unpadded title={t.detailsPayment}>
+								<Item value={invoice.items.heatPump.payment} />
+							</Section>
+
+							<Divider unpadded />
+
+							<Section unpadded title={t.detailsDescription}>
+								<Item value={invoice.items.heatPump.details} />
+							</Section>
+						</View>
+					)}
+				</View>
 			</DetailPage>
 		</PDFDocument>
 	);

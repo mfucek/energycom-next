@@ -35,6 +35,8 @@ export const DashboardPage = () => {
 				<Card className="flex flex-col gap-6">
 					<InvoiceForm
 						onPreview={(data) => {
+							console.log('data', data);
+
 							setInvoice(data);
 						}}
 						onDownload={async (data) => {

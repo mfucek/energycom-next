@@ -16,10 +16,22 @@ export const invoiceSchema = z.object({
 		vat: z.number().min(0).max(100),
 		language: z.enum(languages)
 	}),
-	details: z.object({
-		description: z.string(),
-		details: z.string(),
-		payment: z.string()
-	})
+	items: z
+		.object({
+			solar: z.object({
+				description: z.string(),
+				details: z.string(),
+				payment: z.string()
+			}),
+			heatPump: z.object({
+				description: z.string(),
+				details: z.string(),
+				payment: z.string()
+			})
+		})
+		.partial()
+		.refine((v) => v.solar || v.heatPump, {
+			message: 'At least one item must be present'
+		})
 });
 export type TInvoiceSchema = z.infer<typeof invoiceSchema>;
