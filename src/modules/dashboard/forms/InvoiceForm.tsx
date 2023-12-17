@@ -171,12 +171,12 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 		captureTranslation(getValues());
 	};
 
-	useEffect(() => {
-		const subscription = watch((value, { name, type }) =>
-			console.log(value, name, type)
-		);
-		return () => subscription.unsubscribe();
-	}, [watch]);
+	// useEffect(() => {
+	// 	const subscription = watch((value, { name, type }) =>
+	// 		console.log(value, name, type)
+	// 	);
+	// 	return () => subscription.unsubscribe();
+	// }, [watch]);
 
 	const handleCheckbox = (name: 'solar' | 'heatPump') => {
 		if (name === 'solar') {
