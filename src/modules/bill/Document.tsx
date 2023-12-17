@@ -263,6 +263,9 @@ export const Document = ({ invoice }: { invoice: TInvoiceSchema }) => {
 						<Item name={t.phone + ':'} value={invoice.client.phone} />
 					)}
 					<Item name={t.email + ':'} value={invoice.client.email} />
+					{invoice.items.solar && (
+						<Item name={t.omm + ':'} value={invoice.items.solar.omm} />
+					)}
 				</Section>
 
 				<Divider />

@@ -21,7 +21,8 @@ export const invoiceSchema = z.object({
 			solar: z.object({
 				description: z.string(),
 				details: z.string(),
-				payment: z.string()
+				payment: z.string(),
+				omm: z.string().min(1)
 			}),
 			heatPump: z.object({
 				description: z.string(),

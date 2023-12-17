@@ -93,7 +93,8 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 							? sta.description
 							: _data.items.solar.description,
 					details: sta.details !== '' ? sta.details : _data.items.solar.details,
-					payment: sta.payment !== '' ? sta.payment : _data.items.solar.payment
+					payment: sta.payment !== '' ? sta.payment : _data.items.solar.payment,
+					omm: _data.items.solar.omm
 			  }
 			: undefined;
 
@@ -190,7 +191,8 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 				setValue('items.solar', {
 					description: '',
 					details: '',
-					payment: ''
+					payment: '',
+					omm: ''
 				});
 			}
 		}
@@ -440,6 +442,13 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 												label="Translated"
 												disabled
 												value={translatedSolarTextAreas.payment}
+											/>
+
+											<Input
+												{...register('items.solar.omm')}
+												label="OMM"
+												type="text"
+												error={errors.items?.solar?.omm?.message}
 											/>
 										</div>
 									)}
