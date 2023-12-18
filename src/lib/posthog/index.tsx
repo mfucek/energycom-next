@@ -42,10 +42,17 @@ export const useCaptureEvent = () => {
 
 	const captureTranslation = (invoice: TInvoiceSchema) => {
 		const {
-			details: { description, details, payment },
+			items: { solar, heatPump },
 			invoice: { language }
 		} = invoice;
-		const descriptionLength = (description + details + payment).length;
+		const descriptionLength = (
+			(solar?.description || '') +
+			(solar?.details || '') +
+			(solar?.payment || '') +
+			(heatPump?.description || '') +
+			(heatPump?.details || '') +
+			(heatPump?.payment || '')
+		).length;
 
 		capture('invoice_translation', {
 			language: language,
