@@ -222,7 +222,7 @@ const Divider = ({ unpadded }: { unpadded?: boolean }) => {
 		<View
 			style={{
 				height: '1px',
-				margin: `24px ${unpadded ? '0' : '64px'}`,
+				margin: `12px ${unpadded ? '0' : '64px'}`,
 				backgroundColor: '#70CDDD'
 			}}
 		/>

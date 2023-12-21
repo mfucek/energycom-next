@@ -172,12 +172,12 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 		captureTranslation(getValues());
 	};
 
-	// useEffect(() => {
-	// 	const subscription = watch((value, { name, type }) =>
-	// 		console.log(value, name, type)
-	// 	);
-	// 	return () => subscription.unsubscribe();
-	// }, [watch]);
+	useEffect(() => {
+		const subscription = watch((value, { name, type }) =>
+			console.log(value, name, type)
+		);
+		return () => subscription.unsubscribe();
+	}, [watch]);
 
 	const handleCheckbox = (name: 'solar' | 'heatPump') => {
 		if (name === 'solar') {
@@ -330,6 +330,7 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 											{...register('invoice.amount', { valueAsNumber: true })}
 											label="Osnovica EUR"
 											type="number"
+											step=".01"
 											error={errors.invoice?.amount?.message}
 										/>
 										<Input
@@ -397,7 +398,7 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 								</div>
 								{errors.items && (
 									<p className="body-2 !font-bold text-danger">
-										{errors.items.message}
+										{errors.items.root?.message || errors.items.message}
 									</p>
 								)}
 								<div className="flex flex-col gap-4">

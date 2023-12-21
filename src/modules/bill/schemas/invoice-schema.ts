@@ -12,7 +12,8 @@ export const invoiceSchema = z.object({
 	invoice: z.object({
 		date: z.date(),
 		number: z.string().min(1),
-		amount: z.number().positive(),
+		amount: z.number().positive().multipleOf(0.01),
+		// .refine((x) => x * 100 - Math.trunc(x * 100) < Number.EPSILON),
 		vat: z.number().min(0).max(100),
 		language: z.enum(languages)
 	}),
