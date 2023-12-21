@@ -77,10 +77,11 @@ const DetailPage: FC<PropsWithChildren<{ title: string }>> = ({
 	);
 };
 
-const FrontPage: FC<{ title: string; subtitle: string }> = ({
-	title,
-	subtitle
-}) => {
+const FrontPage: FC<{
+	title: string;
+	subtitle: string;
+	type?: 'solar' | 'heatPump';
+}> = ({ title, subtitle, type }) => {
 	return (
 		<Page
 			size={'A4'}
@@ -138,15 +139,39 @@ const FrontPage: FC<{ title: string; subtitle: string }> = ({
 				</Text>
 			</View>
 
-			<Image
-				src={endpoint + '/assets/footer-big.png'}
-				style={{
-					position: 'absolute',
-					bottom: '0',
-					left: '0',
-					width: '100%'
-				}}
-			/>
+			{type == 'solar' && (
+				<Image
+					src={endpoint + '/assets/footer-big-solar.png'}
+					style={{
+						position: 'absolute',
+						bottom: '0',
+						left: '0',
+						width: '100%'
+					}}
+				/>
+			)}
+			{type == 'heatPump' && (
+				<Image
+					src={endpoint + '/assets/footer-big-heatPump.png'}
+					style={{
+						position: 'absolute',
+						bottom: '0',
+						left: '0',
+						width: '100%'
+					}}
+				/>
+			)}
+			{typeof type === 'undefined' && (
+				<Image
+					src={endpoint + '/assets/footer-big.png'}
+					style={{
+						position: 'absolute',
+						bottom: '0',
+						left: '0',
+						width: '100%'
+					}}
+				/>
+			)}
 		</Page>
 	);
 };
@@ -242,11 +267,25 @@ export const Document = ({ invoice }: { invoice: TInvoiceSchema }) => {
 		heading = t.headingHeatPump;
 	}
 
+	let imageType: undefined | 'solar' | 'heatPump' = undefined;
+	switch (true) {
+		case !!invoice.items.solar && !invoice.items.heatPump:
+			imageType = 'solar';
+			break;
+		case !invoice.items.solar && !!invoice.items.heatPump:
+			imageType = 'heatPump';
+			break;
+		default:
+			imageType = undefined;
+			break;
+	}
+
 	return (
 		<PDFDocument>
 			<FrontPage
 				title={`${heading} ${t.number} ${invoice.invoice.number}`}
 				subtitle={`${t.subtitle}`}
+				type={imageType}
 			/>
 
 			<DetailPage
