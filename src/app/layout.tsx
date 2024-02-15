@@ -1,5 +1,7 @@
+import { Container } from '@/components/Container';
 import { Providers } from '@/components/Providers';
 import { Viewport } from '@/components/Viewport';
+import { DashboardHeader } from '@/modules/dashboard/components/molecules/DashboardHeader';
 import '@/styles/colors.css';
 import '@/styles/globals.css';
 import '@/styles/typography.css';
@@ -23,7 +25,16 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={inter.className}>
 				<Providers>
-					<Viewport>{children}</Viewport>
+					<Viewport>
+						<div className="py-10">
+							<Container>
+								<div className="flex flex-col gap-10">
+									<DashboardHeader />
+									{children}
+								</div>
+							</Container>
+						</div>
+					</Viewport>
 				</Providers>
 			</body>
 		</html>

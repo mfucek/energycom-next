@@ -27,3 +27,10 @@ a {
 		transform: rotate(360deg);
 	}
 }
+
+.actionable {
+	@apply opacity-100 md:hover:opacity-80 active:!opacity-60;
+	@apply translate-y-0 md:hover:translate-y-[-4px] active:!translate-y-[2px];
+	@apply duration-300 hover:duration-100;
+	@apply cursor-pointer;
+}
