@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/Button';
 import { DatePicker } from '@/components/DatePicker';
+import Icon from '@/components/Icon';
 import { Input } from '@/components/Input';
 import { Select } from '@/components/Select';
 import { TabHandle, Tabs } from '@/components/Tabs';
@@ -13,12 +14,14 @@ import {
 	TInvoiceSchema,
 	invoiceSchema
 } from '@/modules/bill/schemas/invoice-schema';
+import { useTranslation } from '@/modules/translation/use-translation';
 import { roundTwoDecimals } from '@/utils/round-two-decimals';
 import { zodResolver } from '@hookform/resolvers/zod';
 import classNames from 'classnames';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useFormPersist } from '../hooks/use-form-persist';
+import { strings } from '../translation/strings';
 
 interface InvoiceFormProps {
 	onPreview?: (data: TInvoiceSchema) => void;
@@ -213,13 +216,15 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 		}
 	};
 
+	const { t } = useTranslation(strings);
+
 	return (
 		<form onSubmit={handleSubmit(onSubmit, onError)}>
 			<div className="flex mb-10">
 				<div className="flex flex-col gap-2 flex-1">
-					<h1 className="title-1">Kreacija Ponude</h1>
+					<h1 className="title-1">{t.invoicing.longTitle}</h1>
 					<p className="text-neutral-strong body-2">
-						Unesite potrebne podatke, zatim ispišite ponudu u PDF obliku.
+						{t.invoicing.description}
 					</p>
 				</div>
 				<div className="shrink-0 flex gap-2">
@@ -229,13 +234,15 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 						onClick={() => {
 							setAction('preview');
 						}}>
-						Pregledaj
+						{t.actions.view}
+						<Icon icon="preview" size={16} />
 					</Button>
 					<Button
 						onClick={() => {
 							setAction('download');
 						}}>
-						Preuzmi
+						{t.actions.download}
+						<Icon icon="download" size={16} className="bg-primary-contrast" />
 					</Button>
 				</div>
 			</div>
@@ -243,39 +250,41 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 				ref={tabsRef}
 				tabs={[
 					{
-						title: 'Klijent',
+						title: t.invoicing.client.tabTitle,
 						error: !!errors.client,
 						content: (
 							<div className="py-6">
-								<p className="title-3 mb-3">Podaci o klijentu</p>
+								<p className="title-3 mb-3">
+									{t.invoicing.client.clientDetailsTitle}
+								</p>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
 									<Input
 										{...register('client.name')}
-										label="Korisnik"
+										label={t.invoicing.client.field.user}
 										type="text"
 										error={errors.client?.name?.message}
 									/>
 									<Input
 										{...register('client.buildingAddress')}
-										label="Adresa građevine"
+										label={t.invoicing.client.field.buildingAddress}
 										type="text"
 										error={errors.client?.buildingAddress?.message}
 									/>
 									<Input
 										{...register('client.email')}
-										label="Email"
+										label={t.invoicing.client.field.email}
 										type="text"
 										error={errors.client?.email?.message}
 									/>
 									<Input
 										{...register('client.phone')}
-										label="Broj telefona"
+										label={t.invoicing.client.field.phoneNumber}
 										type="text"
 										error={errors.client?.phone?.message}
 									/>
 									<Input
 										{...register('client.oib', { valueAsNumber: true })}
-										label="OIB"
+										label={t.invoicing.client.field.identificationNumber}
 										type="number"
 										error={errors.client?.oib?.message}
 									/>
@@ -284,21 +293,23 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 						)
 					},
 					{
-						title: 'Ponuda',
+						title: t.invoicing.invoice.tabTitle,
 						error: !!errors.invoice,
 						content: (
 							<div className="py-6">
-								<p className="title-3 mb-3">Broj i datum ponude</p>
+								<p className="title-3 mb-3">
+									{t.invoicing.invoice.invoiceIdentificationTitle}
+								</p>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
 									<Input
 										{...register('invoice.number')}
-										label="Broj ponude"
+										label={t.invoicing.invoice.field.number}
 										type="text"
 										error={errors.invoice?.number?.message}
 									/>
 									<DatePicker
 										{...register('invoice.date', { valueAsDate: true })}
-										label="Datum ponude"
+										label={t.invoicing.invoice.field.date}
 										type="text"
 										value={
 											new Date(watch('invoice.date') || new Date())
@@ -309,33 +320,37 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 										error={errors.invoice?.date?.message}
 									/>
 								</div>
-								<p className="title-3 mb-3">Jezik ponude</p>
+								<p className="title-3 mb-3">
+									{t.invoicing.invoice.invoiceLanguageTitle}
+								</p>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
 									<Select
 										{...register('invoice.language')}
-										label="Jezik ponude"
+										label={t.invoicing.invoice.field.language}
 										error={errors.invoice?.language?.message}
 										defaultValue={'hr'}>
-										<option value={'hr'}>Hrvatski</option>
-										<option value={'en'}>Engleski</option>
-										<option value={'fr'}>Francuski</option>
-										<option value={'de'}>Njemački</option>
-										<option value={'it'}>Talijanski</option>
+										<option value={'hr'}>{t.general.languages.hr}</option>
+										<option value={'en'}>{t.general.languages.en}</option>
+										<option value={'fr'}>{t.general.languages.fr}</option>
+										<option value={'de'}>{t.general.languages.de}</option>
+										<option value={'it'}>{t.general.languages.it}</option>
 									</Select>
 								</div>
-								<p className="title-3 mb-3">Iznos Ponude</p>
+								<p className="title-3 mb-3">
+									{t.invoicing.invoice.invoiceAmountTitle}
+								</p>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
 									<div className="flex flex-col gap-2">
 										<Input
 											{...register('invoice.amount', { valueAsNumber: true })}
-											label="Osnovica EUR"
+											label={t.invoicing.invoice.field.basisAmount}
 											type="number"
 											step=".01"
 											error={errors.invoice?.amount?.message}
 										/>
 										<Input
 											{...register('invoice.vat', { valueAsNumber: true })}
-											label="Iznos PDV (%)"
+											label={t.invoicing.invoice.field.taxAmount + ' (%)'}
 											type="number"
 											defaultValue={25}
 											error={errors.invoice?.vat?.message}
@@ -343,7 +358,7 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 									</div>
 									<div className="flex flex-col gap-2">
 										<Input
-											label="Osnovica HRK"
+											label={t.invoicing.invoice.field.basisAmount + ' HRK'}
 											value={
 												roundTwoDecimals(
 													watch('invoice.amount') * exchangeEURHRK
@@ -352,7 +367,11 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 											disabled
 										/>
 										<Input
-											label="Ukupno EUR (sa PDV)"
+											label={
+												t.invoicing.invoice.field.totalAmount +
+												' EUR ' +
+												t.invoicing.invoice.field.withVAT
+											}
 											value={
 												roundTwoDecimals(
 													watch('invoice.amount') *
@@ -362,7 +381,11 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 											disabled
 										/>
 										<Input
-											label="Ukupno HRK (sa PDV)"
+											label={
+												t.invoicing.invoice.field.totalAmount +
+												' HRK ' +
+												t.invoicing.invoice.field.withVAT
+											}
 											value={
 												roundTwoDecimals(
 													watch('invoice.amount') *
@@ -378,12 +401,14 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 						)
 					},
 					{
-						title: 'Stavke',
+						title: t.invoicing.items.tabTitle,
 						error: !!errors.items,
 						content: (
 							<div className="py-6 flex flex-col gap-6">
 								<div className="flex justify-between">
-									<p className="title-2">Sadržaj Ponude</p>
+									<p className="title-2">
+										{t.invoicing.items.invoiceContentTitle}
+									</p>
 									<Button
 										theme="neutral"
 										variant="outline"
@@ -393,7 +418,12 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 										onClick={() => {
 											handleTranslate();
 										}}>
-										Prevedi
+										{t.actions.translate +
+											' ' +
+											t.general.adjectives.to +
+											' ' +
+											t.general.languages[getValues('invoice.language')]}
+										<Icon icon="ai" size={16} />
 									</Button>
 								</div>
 								{errors.items && (
@@ -410,44 +440,44 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 											checked={watch('items.solar') !== undefined}
 											onClick={() => handleCheckbox('solar')}
 										/>
-										<p className="title-3">Solarna Elektrana</p>
+										<p className="title-3">{t.invoicing.items.item.solar}</p>
 									</div>
 									{watch('items.solar') !== undefined && (
 										<div className={classNames('grid grid-cols-2 gap-2')}>
 											<TextArea
 												{...register('items.solar.description')}
-												label="Podaci o proizvodu i usluzi"
+												label={t.invoicing.items.field.itemDetails}
 												error={errors.items?.solar?.description?.message}
 											/>
 											<TextArea
-												label="Translated"
+												label={t.invoicing.items.field.translated}
 												disabled
 												value={translatedSolarTextAreas.description}
 											/>
 											<TextArea
 												{...register('items.solar.details')}
-												label="Opis proizvoda i usluge"
+												label={t.invoicing.items.field.itemDescription}
 												error={errors.items?.solar?.details?.message}
 											/>
 											<TextArea
-												label="Translated"
+												label={t.invoicing.items.field.translated}
 												disabled
 												value={translatedSolarTextAreas.details}
 											/>
 											<TextArea
 												{...register('items.solar.payment')}
-												label="Podaci o plaćanju"
+												label={t.invoicing.items.field.paymentDetails}
 												error={errors.items?.solar?.payment?.message}
 											/>
 											<TextArea
-												label="Translated"
+												label={t.invoicing.items.field.translated}
 												disabled
 												value={translatedSolarTextAreas.payment}
 											/>
 
 											<Input
 												{...register('items.solar.omm')}
-												label="OMM"
+												label={t.invoicing.items.field.omm}
 												type="text"
 												error={errors.items?.solar?.omm?.message}
 											/>
@@ -464,38 +494,38 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 											checked={watch('items.heatPump') !== undefined}
 											onClick={() => handleCheckbox('heatPump')}
 										/>
-										<p className="title-3">Dizalica Topline</p>
+										<p className="title-3">{t.invoicing.items.item.heatPump}</p>
 									</div>
 
 									{watch('items.heatPump') !== undefined && (
 										<div className={classNames('grid grid-cols-2 gap-2')}>
 											<TextArea
 												{...register('items.heatPump.description')}
-												label="Podaci o proizvodu i usluzi"
+												label={t.invoicing.items.field.itemDetails}
 												error={errors.items?.heatPump?.description?.message}
 											/>
 											<TextArea
-												label="Translated"
+												label={t.invoicing.items.field.translated}
 												disabled
 												value={translatedHeatPumpTextAreas.description}
 											/>
 											<TextArea
 												{...register('items.heatPump.details')}
-												label="Opis proizvoda i usluge"
+												label={t.invoicing.items.field.itemDescription}
 												error={errors.items?.heatPump?.details?.message}
 											/>
 											<TextArea
-												label="Translated"
+												label={t.invoicing.items.field.translated}
 												disabled
 												value={translatedHeatPumpTextAreas.details}
 											/>
 											<TextArea
 												{...register('items.heatPump.payment')}
-												label="Podaci o plaćanju"
+												label={t.invoicing.items.field.paymentDetails}
 												error={errors.items?.heatPump?.payment?.message}
 											/>
 											<TextArea
-												label="Translated"
+												label={t.invoicing.items.field.translated}
 												disabled
 												value={translatedHeatPumpTextAreas.payment}
 											/>

@@ -1,7 +1,12 @@
 import React from 'react';
 
 const icons = {
-	invoice: '/assets/icons/invoice.svg'
+	invoice: '/assets/icons/invoice.svg',
+	language: '/assets/icons/language.svg',
+	theme: '/assets/icons/theme.svg',
+	ai: '/assets/icons/ai.svg',
+	download: '/assets/icons/download.svg',
+	preview: '/assets/icons/preview.svg'
 };
 
 export type IconName = keyof typeof icons;

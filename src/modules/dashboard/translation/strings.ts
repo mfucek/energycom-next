@@ -11,6 +11,40 @@ export const strings = {
 			hr: 'Jezik',
 			en: 'Language',
 			fr: 'Langue'
+		},
+		languages: {
+			hr: {
+				hr: 'Hrvatski',
+				en: 'Croatian',
+				fr: 'Croate'
+			},
+			en: {
+				hr: 'Engleski',
+				en: 'English',
+				fr: 'Anglais'
+			},
+			fr: {
+				hr: 'Francuski',
+				en: 'French',
+				fr: 'Français'
+			},
+			de: {
+				hr: 'Njemački',
+				en: 'German',
+				fr: 'Allemand'
+			},
+			it: {
+				hr: 'Talijanski',
+				en: 'Italian',
+				fr: 'Italien'
+			}
+		},
+		adjectives: {
+			to: {
+				hr: 'na',
+				en: 'to',
+				fr: 'à'
+			}
 		}
 	},
 	actions: {
@@ -37,9 +71,9 @@ export const strings = {
 			fr: 'Nouvelle facture'
 		},
 		longTitle: {
-			hr: 'Nova Ponuda',
-			en: 'New Invoice',
-			fr: 'Nouvelle facture'
+			hr: 'Kreacija Ponude',
+			en: 'Invoice Creation',
+			fr: 'Création de facture'
 		},
 		description: {
 			hr: 'Unesite potrebne podatke, zatim ispišite ponudu u PDF obliku.',

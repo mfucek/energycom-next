@@ -59,7 +59,7 @@ export const Button: FC<
 	...rest
 }) => {
 	const buttonClass = classNames(
-		'relative px-3 h-10 rounded-full duration-300 hover:duration-100 disabled:cursor-not-allowed',
+		'flex flex-row items-center gap-1 relative px-3 h-10 rounded-full duration-300 hover:duration-100 disabled:cursor-not-allowed',
 		sizeClass[size],
 		variantThemeClass[variant][theme],
 		disabled || loading
