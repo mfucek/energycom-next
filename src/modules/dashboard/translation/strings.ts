@@ -228,6 +228,13 @@ export const strings = {
 					fr: 'Traduit'
 				}
 			}
+		},
+		preview: {
+			tabTitle: {
+				hr: 'Pregled',
+				en: 'Preview',
+				fr: 'Aperçu'
+			}
 		}
 	}
 } satisfies TranslationList;

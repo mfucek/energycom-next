@@ -9,7 +9,6 @@ import { TabHandle, Tabs } from '@/components/Tabs';
 import { TextArea } from '@/components/TextArea';
 import { useCaptureEvent } from '@/lib/posthog';
 import { trpc } from '@/lib/trpc/client';
-import { exchangeEURHRK } from '@/modules/bill/constants/exchange-eur-hrk';
 import {
 	TInvoiceSchema,
 	invoiceSchema
@@ -357,7 +356,7 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 										/>
 									</div>
 									<div className="flex flex-col gap-2">
-										<Input
+										{/* <Input
 											label={t.invoicing.invoice.field.basisAmount + ' HRK'}
 											value={
 												roundTwoDecimals(
@@ -365,7 +364,7 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 												) || 0
 											}
 											disabled
-										/>
+										/> */}
 										<Input
 											label={
 												t.invoicing.invoice.field.totalAmount +
@@ -380,7 +379,7 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 											}
 											disabled
 										/>
-										<Input
+										{/* <Input
 											label={
 												t.invoicing.invoice.field.totalAmount +
 												' HRK ' +
@@ -394,7 +393,7 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 												) || 0
 											}
 											disabled
-										/>
+										/> */}
 									</div>
 								</div>
 							</div>
@@ -536,7 +535,7 @@ export const InvoiceForm: FC<InvoiceFormProps> = ({
 						)
 					},
 					{
-						title: 'Pregled',
+						title: t.invoicing.preview.tabTitle,
 						content: previewTab
 					}
 				]}
