@@ -12,7 +12,6 @@ import { FC, PropsWithChildren, ReactNode } from 'react';
 import { GradientBackground } from './components/GradientBackground';
 import { Logo1 } from './components/Logo1';
 import { Logo2 } from './components/Logo2';
-import { exchangeEURHRK } from './constants/exchange-eur-hrk';
 import { useTranslation } from './constants/translations';
 import { TInvoiceSchema } from './schemas/invoice-schema';
 
@@ -334,7 +333,7 @@ export const Document = ({ invoice }: { invoice: TInvoiceSchema }) => {
 							)}
 						</Text>
 					</Item>
-					<Item
+					{/* <Item
 						name={' '}
 						value={`${formatCurrency(
 							invoice.invoice.amount *
@@ -342,7 +341,7 @@ export const Document = ({ invoice }: { invoice: TInvoiceSchema }) => {
 								exchangeEURHRK,
 							'HRK'
 						)} (1 EUR = ${exchangeEURHRK} HRK)`}
-					/>
+					/> */}
 				</Section>
 
 				<Divider />
